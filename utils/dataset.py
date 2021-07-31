@@ -188,7 +188,7 @@ def init_cache(data_list: list, sr: int, cache_level: int, audio_settings: dict,
 
     pool = mp.Pool(n_cache_workers)
 
-    for audio, sr in tqdm(pool.imap(func=loader_fn, iterable=data_list), total=len(data_list)):
+    for audio in tqdm(pool.imap(func=loader_fn, iterable=data_list), total=len(data_list)):
         cache.append(audio)
     
     pool.close()
