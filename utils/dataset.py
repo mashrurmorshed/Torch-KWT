@@ -74,7 +74,7 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
 class GoogleSpeechDataset(Dataset):
     """Dataset wrapper for Google Speech Commands V2."""
     
-    def __init__(self, data_list: list, audio_settings: dict, aug_settings: dict = None, cache: bool = False):
+    def __init__(self, data_list: list, audio_settings: dict, aug_settings: dict = None, cache: int = 0):
         super().__init__()
 
         self.audio_settings = audio_settings
@@ -83,7 +83,7 @@ class GoogleSpeechDataset(Dataset):
 
         if cache:
             print("Caching dataset into memory.")
-            self.data_list = init_cache(data_list, audio_settings["sr"])
+            self.data_list = init_cache(data_list, audio_settings["sr"], cache, audio_settings)
         else:
             self.data_list = data_list
             
@@ -131,24 +131,26 @@ class GoogleSpeechDataset(Dataset):
         # Waveform 
         ###################
 
-        if self.aug_settings is not None:
-            if "bg_noise" in self.aug_settings:
-                x = self.bg_adder(samples=x, sample_rate=sr)
+        if self.cache < 2:
+            if self.aug_settings is not None:
+                if "bg_noise" in self.aug_settings:
+                    x = self.bg_adder(samples=x, sample_rate=sr)
 
-            if "time_shift" in self.aug_settings:
-                x = time_shift(x, sr, **self.aug_settings["time_shift"])
+                if "time_shift" in self.aug_settings:
+                    x = time_shift(x, sr, **self.aug_settings["time_shift"])
 
-            if "resample" in self.aug_settings:
-                x, _ = resample(x, sr, **self.aug_settings["resample"])
+                if "resample" in self.aug_settings:
+                    x, _ = resample(x, sr, **self.aug_settings["resample"])
             
-        x = librosa.util.fix_length(x, sr)
+            x = librosa.util.fix_length(x, sr)
 
-        ###################
-        # Spectrogram
-        ###################
-     
-        x = librosa.feature.melspectrogram(y=x, **self.audio_settings)        
-        x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=self.audio_settings["n_mels"])
+            ###################
+            # Spectrogram
+            ###################
+        
+            x = librosa.feature.melspectrogram(y=x, **self.audio_settings)        
+            x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=self.audio_settings["n_mels"])
+
 
         if self.aug_settings is not None:
             if "spec_aug" in self.aug_settings:
@@ -159,12 +161,13 @@ class GoogleSpeechDataset(Dataset):
 
 
 
-def init_cache(data_list: list, sr: int, n_cache_workers: int = 4) -> list:
+def init_cache(data_list: list, sr: int, cache_level: int, audio_settings: dict, n_cache_workers: int = 4) -> list:
     """Loads entire dataset into memory for later use.
 
     Args:
         data_list (list): List of data items.
         sr (int): Sampling rate.
+        cache_level (int): Cache levels, one of (1, 2), caching wavs and spectrograms respectively.
         n_cache_workers (int, optional): Number of workers. Defaults to 4.
 
     Returns:
@@ -172,7 +175,16 @@ def init_cache(data_list: list, sr: int, n_cache_workers: int = 4) -> list:
     """
 
     cache = []
-    loader_fn = functools.partial(librosa.load, sr=sr)
+
+    def load_audio(path, sr, cache_level, audio_settings):
+        x = librosa.load(path, sr)[0]
+        if cache_level == 2:
+            x = librosa.util.fix_length(x, sr)
+            x = librosa.feature.melspectrogram(y=x, **audio_settings)        
+            x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
+        return x
+
+    loader_fn = functools.partial(load_audio, sr=sr, cache_level=cache_level, audio_settings=audio_settings)
 
     pool = mp.Pool(n_cache_workers)
 

@@ -17,7 +17,7 @@ exp:
     val_freq: 1    # validate every v_f epochs
     n_workers: 4
     pin_memory: True
-    cache: True
+    cache: 2 # 0 -> no cache | 1 -> cache wavs | 2 -> cache specs; stops wav augments
     
 
 hparams:
