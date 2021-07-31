@@ -160,6 +160,14 @@ class GoogleSpeechDataset(Dataset):
         return x
 
 
+def cache_item_loader(path, sr, cache_level, audio_settings):
+        x = librosa.load(path, sr)[0]
+        if cache_level == 2:
+            x = librosa.util.fix_length(x, sr)
+            x = librosa.feature.melspectrogram(y=x, **audio_settings)        
+            x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
+        return x
+
 
 def init_cache(data_list: list, sr: int, cache_level: int, audio_settings: dict, n_cache_workers: int = 4) -> list:
     """Loads entire dataset into memory for later use.
@@ -176,15 +184,7 @@ def init_cache(data_list: list, sr: int, cache_level: int, audio_settings: dict,
 
     cache = []
 
-    def load_audio(path, sr, cache_level, audio_settings):
-        x = librosa.load(path, sr)[0]
-        if cache_level == 2:
-            x = librosa.util.fix_length(x, sr)
-            x = librosa.feature.melspectrogram(y=x, **audio_settings)        
-            x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
-        return x
-
-    loader_fn = functools.partial(load_audio, sr=sr, cache_level=cache_level, audio_settings=audio_settings)
+    loader_fn = functools.partial(cache_item_loader, sr=sr, cache_level=cache_level, audio_settings=audio_settings)
 
     pool = mp.Pool(n_cache_workers)
 
