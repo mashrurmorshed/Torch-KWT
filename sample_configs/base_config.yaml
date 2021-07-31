@@ -34,8 +34,17 @@ hparams:
         hop_length: 160
         center: False
     
-    model:
+    model:   
+        input_res: [98, 40]
+        patch_res: [40, 1]
         num_classes: 35
+        mlp_dim: 768
+        dim: 192
+        heads: 3
+        depth: 12
+        dropout: 0.0
+        emb_dropout: 0.1
+        pre_norm: False
 
     optimizer:
         opt_type: adamw

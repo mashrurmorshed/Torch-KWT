@@ -6,6 +6,7 @@ import numpy as np
 import random
 import os
 import wandb
+from models.kwt import KWT
 
 
 def seed_everything(seed: str) -> None:
@@ -88,18 +89,7 @@ def get_model(model_config: dict) -> nn.Module:
         nn.Module: Model instance.
     """
 
-    # raise NotImplementedError
-
-    class Dummy(nn.Module):
-        def __init__(self, num_classes):
-            super().__init__()
-            self.l = nn.Linear(1, num_classes)
-        
-        def forward(self, input):
-            a = torch.randn(input.shape[0], 1).to(input.device)
-            return self.l(a)
-
-    return Dummy(**model_config)
+    return KWT(**model_config)
 
 
 def save_model(epoch: int, val_acc: float, save_path: str, net: nn.Module, optimizer : optim.Optimizer = None, log_file : str = None) -> None:

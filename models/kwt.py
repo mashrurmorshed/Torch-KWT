@@ -98,7 +98,7 @@ class Transformer(nn.Module):
 
 
 class KWT(nn.Module):
-    def __init__(self, *, input_res, patch_res, num_classes, dim, depth, heads, mlp_dim, pool = 'cls', channels = 1, dim_head = 64, dropout = 0., emb_dropout = 0.):
+    def __init__(self, *, input_res, patch_res, num_classes, dim, depth, heads, mlp_dim, pool = 'cls', channels = 1, dim_head = 64, dropout = 0., emb_dropout = 0., pre_norm = True):
         super().__init__()
         
         num_patches = int(input_res[0]/patch_res[0] * input_res[1]/patch_res[1])
@@ -115,7 +115,7 @@ class KWT(nn.Module):
         self.cls_token = nn.Parameter(torch.randn(1, 1, dim))
         self.dropout = nn.Dropout(emb_dropout)
 
-        self.transformer = Transformer(dim, depth, heads, dim_head, mlp_dim, dropout)
+        self.transformer = Transformer(dim, depth, heads, dim_head, mlp_dim, pre_norm, dropout)
 
         self.pool = pool
         self.to_latent = nn.Identity()
