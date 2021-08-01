@@ -1,5 +1,7 @@
 # Torch-KWT
-Unofficial PyTorch implementation of *Keyword Transformer: A Self-Attention Model for Keyword Spotting*. 
+Unofficial PyTorch implementation of *Keyword Transformer: A Self-Attention Model for Keyword Spotting*.
+
+<a href="https://colab.research.google.com/drive/1HUtchDtAcz_8FyTjD4wKI1XfKDKLLi26?usp=sharing" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/></a>
 
 ## Setup
 
@@ -16,9 +18,6 @@ python train.py --conf path/to/config.yaml
 
 Refer to the [example config](sample_configs/base_config.yaml) to see how the config file looks like, and see the [config explanation](docs/config_file_explained.md) for a rundown of the various config parameters.
 
-## Tutorials
-
-https://colab.research.google.com/drive/1HUtchDtAcz_8FyTjD4wKI1XfKDKLLi26?usp=sharing
 
 ## Weights & Biases
 
