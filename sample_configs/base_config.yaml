@@ -1,0 +1,75 @@
+# sample config
+
+data_root: ./data/
+val_list_file: ./data/validation_list.txt
+test_list_file: ./data/testing_list.txt
+
+exp:
+    wandb: False
+    wandb_api_key: <path/to/api/key>
+    proj_name: torch-kwt
+    exp_dir: ./runs
+    exp_name: exp-0
+    device: auto
+    log_freq: 5    # log every l_f steps
+    log_to_file: True
+    log_to_stdout: True
+    val_freq: 1    # validate every v_f epochs
+    n_workers: 4
+    pin_memory: True
+    cache: 2 # 0 -> no cache | 1 -> cache wavs | 2 -> cache specs; stops wav augments
+    
+
+hparams:
+    seed: 0
+    batch_size: 16
+    n_epochs: 1
+    l_smooth: 0.1
+
+    audio:
+        sr: 16000
+        n_mels: 40
+        n_fft: 480
+        win_length: 480
+        hop_length: 160
+        center: False
+    
+    model:   
+        input_res: [98, 40]
+        patch_res: [40, 1]
+        num_classes: 35
+        mlp_dim: 768
+        dim: 192
+        heads: 3
+        depth: 12
+        dropout: 0.0
+        emb_dropout: 0.1
+        pre_norm: False
+
+    optimizer:
+        opt_type: adamw
+        opt_kwargs:
+          lr: 0.001
+          weight_decay: 0.1
+    
+    scheduler:
+        n_warmup: 10
+        scheduler_type: cosine_annealing
+
+    augment:
+        resample:
+            r_min: 0.85
+            r_max: 1.15
+        
+        time_shift:
+            s_min: -0.1
+            s_max: 0.1
+
+        bg_noise:
+            bg_folder: ./data/_background_noise_/
+
+        spec_aug:
+            n_time_masks: 2
+            time_mask_width: 25
+            n_freq_masks: 2
+            freq_mask_width: 7
