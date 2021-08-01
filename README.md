@@ -16,6 +16,10 @@ python train.py --conf path/to/config.yaml
 
 Refer to the [example config](sample_configs/base_config.yaml) to see how the config file looks like, and see the [config explanation](docs/config_file_explained.md) for a rundown of the various config parameters.
 
+## Tutorials
+
+https://colab.research.google.com/drive/1HUtchDtAcz_8FyTjD4wKI1XfKDKLLi26?usp=sharing
+
 ## Weights & Biases
 
 You can optionally log your training runs with [wandb](https://wandb.ai/site). You may provide a path to a file containing your API key, or simply provide it manually from the login prompt when your start your training.
