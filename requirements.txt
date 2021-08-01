@@ -1,0 +1,6 @@
+pyyaml
+librosa
+audiomentations
+wandb
+tqdm
+einops
