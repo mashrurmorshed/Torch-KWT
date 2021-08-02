@@ -68,7 +68,8 @@ hparams:
 hparams:
     ...
     ...
-    model:   
+    model:
+        name: kwt-1          # If name is provided, will look for named model (e.g. kwt-1, kwt-2, kwt-3) and will ignore below parameters.
         input_res: [98, 40]  # Shape of input spectrogram (T x n_mels)
         patch_res: [40, 1]   # Resolution of patches
         num_classes: 35      # Number of classes

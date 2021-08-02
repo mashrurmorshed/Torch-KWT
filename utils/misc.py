@@ -6,7 +6,7 @@ import numpy as np
 import random
 import os
 import wandb
-from models.kwt import KWT
+from models.kwt import KWT, kwt_from_name
 
 
 def seed_everything(seed: str) -> None:
@@ -83,13 +83,16 @@ def get_model(model_config: dict) -> nn.Module:
     """Creates model from config dict.
 
     Args:
-        model_config (dict): Dict containing model config params.
+        model_config (dict): Dict containing model config params. If the "name" key is not None, other params are ignored.
 
     Returns:
         nn.Module: Model instance.
     """
-
-    return KWT(**model_config)
+    
+    if model_config["name"] is not None:
+        kwt_from_name(model_config["name"])
+    else:
+        return KWT(**model_config)
 
 
 def save_model(epoch: int, val_acc: float, save_path: str, net: nn.Module, optimizer : optim.Optimizer = None, log_file : str = None) -> None:

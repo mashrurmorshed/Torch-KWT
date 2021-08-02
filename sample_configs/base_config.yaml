@@ -36,7 +36,8 @@ hparams:
         hop_length: 160
         center: False
     
-    model:   
+    model:
+        name: # if name is provided below settings will be ignored   
         input_res: [98, 40]
         patch_res: [40, 1]
         num_classes: 35
