@@ -188,4 +188,4 @@ def kwt_from_name(model_name: str):
 
     assert model_name in models.keys(), f"Unsupported model_name {model_name}; must be one of {list(models.keys())}"
 
-    return KWT(**models["model_name"])
+    return KWT(**models[model_name])
