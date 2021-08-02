@@ -88,9 +88,9 @@ def get_model(model_config: dict) -> nn.Module:
     Returns:
         nn.Module: Model instance.
     """
-    
+
     if model_config["name"] is not None:
-        kwt_from_name(model_config["name"])
+        return kwt_from_name(model_config["name"])
     else:
         return KWT(**model_config)
 
