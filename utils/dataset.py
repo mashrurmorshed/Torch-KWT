@@ -70,7 +70,7 @@ class GoogleSpeechDataset(Dataset):
     def __init__(self, data_list: list, label_map: dict, audio_settings: dict, aug_settings: dict = None, cache: int = 0):
         super().__init__()
 
-        self.label_2_idx = {v: k for k, v in label_map.items()}
+        self.label_2_idx = {v: int(k) for k, v in label_map.items()}
         self.audio_settings = audio_settings
         self.aug_settings = aug_settings
         self.cache = cache
