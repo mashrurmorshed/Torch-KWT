@@ -1,7 +1,7 @@
 # Torch-KWT
 Unofficial PyTorch implementation of *Keyword Transformer: A Self-Attention Model for Keyword Spotting*.
 
-<a href="https://colab.research.google.com/drive/1HUtchDtAcz_8FyTjD4wKI1XfKDKLLi26?usp=sharing" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/></a>
+<a href="#" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab"/></a>
 
 ## Setup
 
@@ -9,9 +9,24 @@ Unofficial PyTorch implementation of *Keyword Transformer: A Self-Attention Mode
 pip install -r requirements.txt
 ```
 
+## Dataset
+To download the Google Speech Commands V2 dataset, you may run the provided bash script as below. This would download and extract the dataset to the "destination path" provided.
+
+```
+sh ./download_gspeech_v2.sh <destination_path>
+```
+
 ## Training
 
-Training is fairly straightforward. Only a path to a config file is required.
+The Speech Commands V2 dataset provides a "validation_list.txt" file and a "testing_list.txt" file. Run:
+
+```
+python make_data_list.py -v <path/to/validation_list.txt> -t <path/to/testing_list.txt> -d <path/to/dataset/root> -o <output dir>
+```
+
+This will create the files `training_list.txt`, `validation_list.txt`, `testing_list.txt` and `label_map.json` at the specified output dir. These will be needed for training.
+
+Running `train.py` is fairly straightforward. Only a path to a config file is required.
 ```
 python train.py --conf path/to/config.yaml
 ```
