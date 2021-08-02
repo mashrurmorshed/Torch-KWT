@@ -44,7 +44,12 @@ def training_pipeline(config):
     #####################################
 
     # data
-    train_list, val_list, test_list = get_train_val_test_split(config["data_root"], config["val_list_file"], config["test_list_file"])
+    with open(config["train_list_file"], "r") as f:
+        train_list = f.read().rstrip().split("\n")
+    
+    with open(config["val_list_file"], "r") as f:
+        val_list = f.read().rstrip().split("\n")
+
     trainloader = get_loader(train_list, config, train=True)
     valloader = get_loader(val_list, config, train=False)
 
@@ -86,6 +91,9 @@ def training_pipeline(config):
     #####################################
     # Final Test
     #####################################
+
+    with open(config["test_list_file"], "r") as f:
+        test_list = f.read().rstrip().split("\n")
 
     testloader = get_loader(test_list, config, train=False)
     final_step = calc_step(config["hparams"]["n_epochs"] + 1, len(trainloader), len(trainloader) - 1)

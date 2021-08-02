@@ -1,8 +1,10 @@
 # sample config
 
 data_root: ./data/
+train_list_file: ./data/training_list.txt
 val_list_file: ./data/validation_list.txt
 test_list_file: ./data/testing_list.txt
+label_map: ./data/label_map.json
 
 exp:
     wandb: False
