@@ -30,3 +30,5 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--data_root", type=str, required=True, help="Root directory of speech commands v2 dataset.")
     parser.add_argument("-o", "--out_dir", type=str, required=True, help="Output directory for data lists and label map.")
     args = parser.parse_args()
+
+    main(args)
