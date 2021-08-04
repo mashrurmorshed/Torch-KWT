@@ -1,5 +1,5 @@
 torch>=1.7.0
-pyyaml
+pyyaml>=5.3.1
 librosa
 audiomentations
 wandb
