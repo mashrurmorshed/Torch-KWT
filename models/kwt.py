@@ -98,7 +98,7 @@ class Transformer(nn.Module):
 
 
 class KWT(nn.Module):
-    def __init__(self, *, input_res, patch_res, num_classes, dim, depth, heads, mlp_dim, pool = 'cls', channels = 1, dim_head = 64, dropout = 0., emb_dropout = 0., pre_norm = True):
+    def __init__(self, input_res, patch_res, num_classes, dim, depth, heads, mlp_dim, pool = 'cls', channels = 1, dim_head = 64, dropout = 0., emb_dropout = 0., pre_norm = True, **kwargs):
         super().__init__()
         
         num_patches = int(input_res[0]/patch_res[0] * input_res[1]/patch_res[1])
@@ -141,3 +141,51 @@ class KWT(nn.Module):
 
         x = self.to_latent(x)
         return self.mlp_head(x)
+
+
+def kwt_from_name(model_name: str):
+
+    models = {
+        "kwt-1": {
+            "input_res": [98, 40],
+            "patch_res": [40, 1],
+            "num_classes": 35,
+            "mlp_dim": 256,
+            "dim": 64,
+            "heads": 1,
+            "depth": 12,
+            "dropout": 0.0,
+            "emb_dropout": 0.1,
+            "pre_norm": False
+        },
+
+        "kwt-2": {
+            "input_res": [98, 40],
+            "patch_res": [40, 1],
+            "num_classes": 35,
+            "mlp_dim": 512,
+            "dim": 128,
+            "heads": 2,
+            "depth": 12,
+            "dropout": 0.0,
+            "emb_dropout": 0.1,
+            "pre_norm": False
+        },
+
+        "kwt-3": {
+            "input_res": [98, 40],
+            "patch_res": [40, 1],
+            "num_classes": 35,
+            "mlp_dim": 768,
+            "dim": 192,
+            "heads": 3,
+            "depth": 12,
+            "dropout": 0.0,
+            "emb_dropout": 0.1,
+            "pre_norm": False
+        }
+    }
+
+    assert model_name in models.keys(), f"Unsupported model_name {model_name}; must be one of {list(models.keys())}"
+
+    return KWT(**models[model_name])

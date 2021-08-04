@@ -1,29 +1,31 @@
 # sample config
 
 data_root: ./data/
+train_list_file: ./data/training_list.txt
 val_list_file: ./data/validation_list.txt
 test_list_file: ./data/testing_list.txt
+label_map: ./data/label_map.json
 
 exp:
     wandb: False
     wandb_api_key: <path/to/api/key>
-    proj_name: torch-kwt
+    proj_name: torch-kwt-1
     exp_dir: ./runs
-    exp_name: exp-0
+    exp_name: exp-0.0.1
     device: auto
-    log_freq: 5    # log every l_f steps
+    log_freq: 20    # log every l_f steps
     log_to_file: True
     log_to_stdout: True
-    val_freq: 1    # validate every v_f epochs
-    n_workers: 4
+    val_freq: 5    # validate every v_f epochs
+    n_workers: 1
     pin_memory: True
     cache: 2 # 0 -> no cache | 1 -> cache wavs | 2 -> cache specs; stops wav augments
     
 
 hparams:
     seed: 0
-    batch_size: 16
-    n_epochs: 1
+    batch_size: 512
+    n_epochs: 140
     l_smooth: 0.1
 
     audio:
@@ -34,7 +36,8 @@ hparams:
         hop_length: 160
         center: False
     
-    model:   
+    model:
+        name: # if name is provided below settings will be ignored   
         input_res: [98, 40]
         patch_res: [40, 1]
         num_classes: 35
@@ -54,6 +57,7 @@ hparams:
     
     scheduler:
         n_warmup: 10
+        max_epochs: 140
         scheduler_type: cosine_annealing
 
     augment:

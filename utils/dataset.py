@@ -8,14 +8,10 @@ import glob
 import os
 from tqdm import tqdm
 import multiprocessing as mp
+import json
 
 from utils.augment import time_shift, resample, spec_augment
 from audiomentations import AddBackgroundNoise
-
-
-LABEL_LIST = None
-LABEL_2_IDX = None
-IDX_2_LABEL = None
 
 
 def get_train_val_test_split(root: str, val_file: str, test_file: str):
@@ -30,23 +26,22 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
         train_list (list): List of paths to training data items.
         val_list (list): List of paths to validation data items.
         test_list (list): List of paths to test data items.
+        label_map (dict): Mapping of indices to label classes.
     """
     
     ####################
     # Labels
     ####################
 
-    global LABEL_LIST, LABEL_2_IDX, IDX_2_LABEL
-    LABEL_LIST = [label for label in sorted(os.listdir(root)) if os.path.isdir(os.path.join(root, label)) and label[0] != "_"]
-    LABEL_2_IDX = {label: idx for idx, label in enumerate(LABEL_LIST)}
-    IDX_2_LABEL = {idx: label for idx, label in enumerate(LABEL_LIST)}
+    label_list = [label for label in sorted(os.listdir(root)) if os.path.isdir(os.path.join(root, label)) and label[0] != "_"]
+    label_map = {idx: label for idx, label in enumerate(label_list)}
 
     ###################
     # Split
     ###################
 
     all_files_set = set()
-    for label in LABEL_LIST:
+    for label in label_list:
         all_files_set.update(set(glob.glob(os.path.join(root, label, "*.wav"))))
     
     with open(val_file, "r") as f:
@@ -60,26 +55,26 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
     all_files_set -= val_files_set
     all_files_set -= test_files_set
     
-    train_list = list(all_files_set)
-    val_list = list(val_files_set)
-    test_list = list(test_files_set)
+    train_list, val_list, test_list = list(all_files_set), list(val_files_set), list(test_files_set)
     
     print(f"Number of training samples: {len(train_list)}")
     print(f"Number of validation samples: {len(val_list)}")
     print(f"Number of test samples: {len(test_list)}")
 
-    return train_list, val_list, test_list
+    return train_list, val_list, test_list, label_map
 
 
 class GoogleSpeechDataset(Dataset):
     """Dataset wrapper for Google Speech Commands V2."""
     
-    def __init__(self, data_list: list, audio_settings: dict, aug_settings: dict = None, cache: int = 0):
+    def __init__(self, data_list: list, label_map: dict, audio_settings: dict, aug_settings: dict = None, cache: int = 0):
         super().__init__()
 
+        self.label_2_idx = {v: int(k) for k, v in label_map.items()}
         self.audio_settings = audio_settings
         self.aug_settings = aug_settings
         self.cache = cache
+        
 
         if cache:
             print("Caching dataset into memory.")
@@ -88,12 +83,10 @@ class GoogleSpeechDataset(Dataset):
             self.data_list = data_list
             
         # labels
-        global LABEL_2_IDX
         self.label_list = []
         for path in data_list:
-            self.label_list.append(LABEL_2_IDX[path.split("/")[-2]])
+            self.label_list.append(self.label_2_idx[path.split("/")[-2]])
 
-        
         if aug_settings is not None:
             if "bg_noise" in self.aug_settings:
                 self.bg_adder = AddBackgroundNoise(sounds_path=aug_settings["bg_noise"]["bg_folder"])
@@ -160,13 +153,13 @@ class GoogleSpeechDataset(Dataset):
         return x
 
 
-def cache_item_loader(path, sr, cache_level, audio_settings):
-        x = librosa.load(path, sr)[0]
-        if cache_level == 2:
-            x = librosa.util.fix_length(x, sr)
-            x = librosa.feature.melspectrogram(y=x, **audio_settings)        
-            x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
-        return x
+def cache_item_loader(path: str, sr: int, cache_level: int, audio_settings: dict) -> np.ndarray:
+    x = librosa.load(path, sr)[0]
+    if cache_level == 2:
+        x = librosa.util.fix_length(x, sr)
+        x = librosa.feature.melspectrogram(y=x, **audio_settings)        
+        x = librosa.feature.mfcc(S=librosa.power_to_db(x), n_mfcc=audio_settings["n_mels"])
+    return x
 
 
 def init_cache(data_list: list, sr: int, cache_level: int, audio_settings: dict, n_cache_workers: int = 4) -> list:
@@ -208,8 +201,12 @@ def get_loader(data_list, config, train=True):
         dataloader (DataLoader): DataLoader wrapper for training/validation/test data.
     """
     
+    with open(config["label_map"], "r") as f:
+        label_map = json.load(f)
+
     dataset = GoogleSpeechDataset(
         data_list=data_list,
+        label_map=label_map,
         audio_settings=config["hparams"]["audio"],
         aug_settings=config["hparams"]["augment"] if train else None,
         cache=config["exp"]["cache"]
