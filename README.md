@@ -38,6 +38,8 @@ Refer to the [example config](sample_configs/base_config.yaml) to see how the co
 
 You can optionally log your training runs with [wandb](https://wandb.ai/site). You may provide a path to a file containing your API key, or simply provide it manually from the login prompt when your start your training.
 
+![wandb](resources/wandb.png "W&B charts")
+
 ## Pretrained Checkpoints
 
 | Model Name | Test Accuracy | Link |

@@ -13,11 +13,11 @@ exp:
     exp_dir: ./runs
     exp_name: exp-0
     device: auto
-    log_freq: 5    # log every l_f steps
+    log_freq: 20    # log every l_f steps
     log_to_file: True
     log_to_stdout: True
-    val_freq: 1    # validate every v_f epochs
-    n_workers: 4
+    val_freq: 5    # validate every v_f epochs
+    n_workers: 1
     pin_memory: True
     cache: 2 # 0 -> no cache | 1 -> cache wavs | 2 -> cache specs; stops wav augments
     
