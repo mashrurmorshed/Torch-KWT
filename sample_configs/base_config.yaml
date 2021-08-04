@@ -9,9 +9,9 @@ label_map: ./data/label_map.json
 exp:
     wandb: False
     wandb_api_key: <path/to/api/key>
-    proj_name: torch-kwt
+    proj_name: torch-kwt-1
     exp_dir: ./runs
-    exp_name: exp-0
+    exp_name: exp-0.0.1
     device: auto
     log_freq: 20    # log every l_f steps
     log_to_file: True
@@ -24,8 +24,8 @@ exp:
 
 hparams:
     seed: 0
-    batch_size: 16
-    n_epochs: 1
+    batch_size: 512
+    n_epochs: 140
     l_smooth: 0.1
 
     audio:
