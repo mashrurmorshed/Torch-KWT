@@ -95,6 +95,7 @@ hparams:
     
     scheduler:               # Warmup scheduling for 10 epochs and cosine annealing, as in the original paper.
         n_warmup: 10         # Please modify get_scheduler() in utils/scheduler.py if you want to add support for other scheduling techniques.
+        max_epochs: 140      # Up to which epoch the normal scheduler will be run.
         scheduler_type: cosine_annealing
 ```
 

@@ -57,6 +57,7 @@ hparams:
     
     scheduler:
         n_warmup: 10
+        max_epochs: 140
         scheduler_type: cosine_annealing
 
     augment:
