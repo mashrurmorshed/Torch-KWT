@@ -129,8 +129,13 @@ def main(args):
         if config["exp"]["wandb_api_key"] is not None:
             with open(config["exp"]["wandb_api_key"], "r") as f:
                 os.environ["WANDB_API_KEY"] = f.read()
+        
+        elif os.environ.get("WANDB_API_KEY", False):
+            print(f"Found API key from env variable.")
+        
         else:
             wandb.login()
+        
         
         with wandb.init(project=config["exp"]["proj_name"], name=config["exp"]["exp_name"], config=config["hparams"]):
             training_pipeline(config)
