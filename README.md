@@ -46,4 +46,4 @@ You can optionally log your training runs with [wandb](https://wandb.ai/site). Y
 | ---------- | ------------- | ---- |
 |    KWT-1   |     95.98*     | [kwt1-v01.pth](https://drive.google.com/uc?id=1Pglq3kFy9BVFk-bPVsbNuX_fzMGJ5uwy&export=download) |
 
-The [example config file](sample_configs/base_config.yaml) provided contains the exact settings used to train the KWT-1 checkpoint, and should be reproducible.
+*The [example config file](sample_configs/base_config.yaml) provided contains the exact settings used to train the KWT-1 checkpoint, and should be reproducible.
