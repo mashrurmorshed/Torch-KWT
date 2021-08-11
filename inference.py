@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from config_parser import get_config
 import torch
 from utils.misc import get_model
-from utils.dataset import get_loader
+from utils.dataset import GoogleSpeechDataset
 from tqdm import tqdm
 import os
 import glob
@@ -10,7 +10,7 @@ import json
 
 
 @torch.no_grad()
-def get_preds(net: nn.Module, dataloader: DataLoader, device: torch.device) -> list:
+def get_preds(net, dataloader, device) -> list:
     """Performs inference."""
 
     net.eval()
@@ -41,7 +41,6 @@ def main(args):
     ######################
     # setup data
     ######################
-    
     if os.path.isdir(args.inp):
         data_list = glob.glob(os.path.join(args.inp, "*.wav"))
     elif os.path.isfile(args.inp):
