@@ -74,7 +74,7 @@ def main(args):
     if args.lmap:
         with open(args.lmap, "r") as f:
             label_map = json.load(f)
-        preds = list(map(lambda a: label_map[a], preds))
+        preds = list(map(lambda a: label_map[str(a)], preds))
     
     pred_dict = dict(zip(data_list, preds))
     
