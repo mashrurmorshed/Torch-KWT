@@ -67,14 +67,12 @@ def get_train_val_test_split(root: str, val_file: str, test_file: str):
 class GoogleSpeechDataset(Dataset):
     """Dataset wrapper for Google Speech Commands V2."""
     
-    def __init__(self, data_list: list, label_map: dict, audio_settings: dict, aug_settings: dict = None, cache: int = 0):
+    def __init__(self, data_list: list, audio_settings: dict, label_map: dict = None, aug_settings: dict = None, cache: int = 0):
         super().__init__()
 
-        self.label_2_idx = {v: int(k) for k, v in label_map.items()}
         self.audio_settings = audio_settings
         self.aug_settings = aug_settings
         self.cache = cache
-        
 
         if cache:
             print("Caching dataset into memory.")
@@ -82,10 +80,15 @@ class GoogleSpeechDataset(Dataset):
         else:
             self.data_list = data_list
             
-        # labels
-        self.label_list = []
-        for path in data_list:
-            self.label_list.append(self.label_2_idx[path.split("/")[-2]])
+        # labels: if no label map is provided, will not load labels. (Use for inference)
+        if label_map is not None:
+            self.label_list = []
+            label_2_idx = {v: int(k) for k, v in label_map.items()}
+            for path in data_list:
+                self.label_list.append(label_2_idx[path.split("/")[-2]])
+        else:
+            self.label_list = None
+        
 
         if aug_settings is not None:
             if "bg_noise" in self.aug_settings:
@@ -103,9 +106,12 @@ class GoogleSpeechDataset(Dataset):
             x = librosa.load(self.data_list[idx], self.audio_settings["sr"])[0]
 
         x = self.transform(x)
-        label = self.label_list[idx]
 
-        return x, label
+        if self.label_list is not None:
+            label = self.label_list[idx]
+            return x, label
+        else:
+            return x
 
 
     def transform(self, x):
