@@ -1,3 +1,5 @@
+"""Run inference on short ~1s clips, like the ones in the Speech Commands dataset."""
+
 from argparse import ArgumentParser
 from config_parser import get_config
 import torch
@@ -80,7 +82,7 @@ def main(args):
     
     os.makedirs(args.out, exist_ok=True)
     out_path = os.path.join(args.out, "preds.json")
-    
+
     with open(out_path, "w+") as f:
         json.dump(pred_dict, f)
 
