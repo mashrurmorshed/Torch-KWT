@@ -65,7 +65,7 @@ def main(args):
     else:
         device = torch.device(args.device)
 
-    preds = get_preds(net, dataloader, device)
+    preds = get_preds(model, dataloader, device)
 
     ######################
     # save predictions
