@@ -80,7 +80,8 @@ def main(args):
     
     os.makedirs(args.out, exist_ok=True)
     out_path = os.path.join(args.out, "preds.json")
-    with open(out_path, "w+"):
+    
+    with open(out_path, "w+") as f:
         json.dump(pred_dict, f)
 
     print(f"Saved preds to {out_path}")
