@@ -65,6 +65,7 @@ def main(args):
     else:
         device = torch.device(args.device)
 
+    model = model.to(device)
     preds = get_preds(model, dataloader, device)
 
     ######################
