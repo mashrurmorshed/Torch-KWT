@@ -29,10 +29,11 @@ def get_clip_pred(net, audio_path, win_len, stride, thresh, config, batch_size, 
 
     audio_settings = config["hparams"]["audio"]
     sr = audio_settings["sr"]
-    win_len, stride = int(win_len * sr), int(win_len * stride)
+    win_len, stride = int(win_len * sr), int(stride * sr)
     x = librosa.load(audio_path, sr)[0]
 
     windows, result = [], []
+
     slice_positions = np.arange(0, len(x) - win_len + 1, stride)
 
     for b, i in enumerate(slice_positions):
@@ -41,10 +42,10 @@ def get_clip_pred(net, audio_path, win_len, stride, thresh, config, batch_size, 
         )
 
         if (not (b + 1) % batch_size) or (b + 1) == len(slice_positions):
-            window = np.stack(window)
-            window  = window.to(device)
-            out = net(window)
-            conf, preds = logits.softmax(1).max(1)
+            windows = torch.from_numpy(np.stack(windows)).float().unsqueeze(1)
+            windows  = windows.to(device)
+            out = net(windows)
+            conf, preds = out.softmax(1).max(1)
             conf, preds = conf.cpu().numpy().reshape(-1, 1), preds.cpu().numpy().reshape(-1, 1)
 
             starts = slice_positions[b - preds.shape[0] + 1: b + 1, None]
@@ -59,21 +60,23 @@ def get_clip_pred(net, audio_path, win_len, stride, thresh, config, batch_size, 
     #######################
     # pred aggregation
     #######################
-    result = np.array(result)
-    
-    if mode == "max":
-        pred = result[result[:, 1].argmax()][0]
-        if label_map is not None:
-            pred = label_map[str(pred)]
-    elif mode == "n_voting":
-        pred = np.bincount(result[:, 0]).argmax()
-        if label_map is not None:
-            pred = label_map[str(pred)]
-    elif mode == "multi":
-        if label_map is not None:
-            pred = list(map(lambda a: [label_map[str(a[0])], a[1], a[2], a[3]], result))
-        else:
-            pred = result.tolist()
+    pred = []
+    if len(result):
+      result = np.array(result)
+      
+      if mode == "max":
+          pred = result[result[:, 1].argmax()][0]
+          if label_map is not None:
+              pred = label_map[str(int(pred))]
+      elif mode == "n_voting":
+          pred = np.bincount(result[:, 0].astype(int)).argmax()
+          if label_map is not None:
+              pred = label_map[str(int(pred))]
+      elif mode == "multi":
+          if label_map is not None:
+              pred = list(map(lambda a: [label_map[str(int(a[0]))], a[1], a[2], a[3]], result))
+          else:
+              pred = result.tolist()
     
     return pred
 
