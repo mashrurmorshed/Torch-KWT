@@ -29,7 +29,7 @@ def get_clip_pred(net, audio_path, win_len, stride, thresh, config, batch_size, 
 
     audio_settings = config["hparams"]["audio"]
     sr = audio_settings["sr"]
-
+    win_len, stride = int(win_len * sr), int(win_len * stride)
     x = librosa.load(audio_path, sr)[0]
 
     windows, result = [], []
