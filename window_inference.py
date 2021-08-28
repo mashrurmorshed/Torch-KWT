@@ -143,7 +143,7 @@ if __name__ == "__main__":
     parser.add_argument("--wlen", type=float, default=1.0, help="Window length. E.g. for wlen = 1, will make inference on 1s windows from the clip.")
     parser.add_argument("--stride", type=float, default=0.2, help="By how much the sliding window will be shifted.")
     parser.add_argument("--thresh", type=float, default=0.85, help="Confidence threshold above which preds will be counted.")
-    parser.add_argument("--mode", type=str, default="max", help="""Prediction logic. One of: max, n_voting, multi.
+    parser.add_argument("--mode", type=str, default="multi", help="""Prediction logic. One of: max, n_voting, multi.
         -'max' simply checks the confidences of every predicted window in a clip and returns the most confident prediction as the output.
         -'n_voting' returns the most frequent predicted class above the threshold.
         -'multi' expects that there are multiple different keyword classes in the audio. For each audio, the output is a list of lists,
