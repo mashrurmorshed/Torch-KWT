@@ -38,7 +38,7 @@ hparams:
     
     model:
         name: # if name is provided below settings will be ignored during model creation   
-        input_res: [98, 40]
+        input_res: [40, 98]
         patch_res: [40, 1]
         num_classes: 35
         mlp_dim: 256
