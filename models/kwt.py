@@ -147,7 +147,7 @@ def kwt_from_name(model_name: str):
 
     models = {
         "kwt-1": {
-            "input_res": [98, 40],
+            "input_res": [40, 98],
             "patch_res": [40, 1],
             "num_classes": 35,
             "mlp_dim": 256,
@@ -160,7 +160,7 @@ def kwt_from_name(model_name: str):
         },
 
         "kwt-2": {
-            "input_res": [98, 40],
+            "input_res": [40, 98],
             "patch_res": [40, 1],
             "num_classes": 35,
             "mlp_dim": 512,
@@ -173,7 +173,7 @@ def kwt_from_name(model_name: str):
         },
 
         "kwt-3": {
-            "input_res": [98, 40],
+            "input_res": [40, 98],
             "patch_res": [40, 1],
             "num_classes": 35,
             "mlp_dim": 768,

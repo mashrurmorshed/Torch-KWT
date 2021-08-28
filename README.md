@@ -35,6 +35,37 @@ python train.py --conf path/to/config.yaml
 
 Refer to the [example config](sample_configs/base_config.yaml) to see how the config file looks like, and see the [config explanation](docs/config_file_explained.md) for a complete rundown of the various config parameters.
 
+## Inference
+
+You can use the pre-trained model (or a model you trained) for inference, using the two scripts:
+
+- `inference.py`: For short ~1s clips, like the audios in the Speech Commands dataset
+- `window_inference.py`: For running inference on longer audio clips, where multiple keywords may be present. Runs inference on the audio in a sliding window manner.
+
+```
+python inference.py --conf sample_configs/base_config.yaml \
+                    --ckpt <path to pretrained_model.ckpt> \
+                    --inp <path to audio.wav / path to audio folder> \
+                    --out <output directory> \
+                    --lmap label_map.json \
+                    --device cpu \
+                    --batch_size 8   # should be possible to use much larger batches if necessary, like 128, 256, 512 etc.
+
+!python window_inference.py --conf sample_configs/base_config.yaml \
+                    --ckpt <path to pretrained_model.ckpt> \
+                    --inp <path to audio.wav / path to audio folder> \
+                    --out <output directory> \
+                    --lmap label_map.json \
+                    --device cpu \
+                    --wlen 1 \
+                    --stride 0.5 \
+                    --thresh 0.85 \
+                    --mode multi
+```
+For detailed usage example, check the colab tutorial.
+
+## Tutorials
+- [Colab Tutorial: [Using pretrained model | Inference scripts | Training]](https://colab.research.google.com/github/ID56/Torch-KWT/blob/main/notebooks/Torch_KWT_Tutorial.ipynb)
 
 ## Weights & Biases
 
